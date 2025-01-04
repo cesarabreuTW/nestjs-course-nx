@@ -1,0 +1,45 @@
+{
+  "name": "pokedex",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/pokedex/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "defaultConfiguration": "production",
+      "options": {
+        "command": "webpack-cli build",
+        "args": ["node-env=production"]
+      },
+      "configurations": {
+        "development": {
+          "args": ["node-env=development"]
+        },
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "pokedex:build",
+        "runBuildTargetDependencies": false
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "pokedex:build:development"
+        },
+        "production": {
+          "buildTarget": "pokedex:build:production"
+        }
+      }
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      }
+    }
+  }
+}

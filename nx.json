@@ -34,7 +34,7 @@
       "options": {
         "targetName": "test"
       },
-      "exclude": ["apps/nest-course-e2e/**/*"]
+      "exclude": ["apps/car-dealership-e2e/**/*", "apps/pokedex-e2e/**/*"]
     }
   ]
 }
