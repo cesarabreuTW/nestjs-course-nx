@@ -1,4 +1,4 @@
-FROM node:alpine as builder
+FROM node:18-alpine as builder
 
 WORKDIR /usr/src/app
 COPY package*.json ./
@@ -7,7 +7,8 @@ RUN npm install --only=development --silent
 COPY . .
 RUN npx nx build pokedex --prod
 
-FROM node:alpine
+FROM node:18-alpine
+
 WORKDIR /usr/src/app
 COPY package*.json ./
 RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*

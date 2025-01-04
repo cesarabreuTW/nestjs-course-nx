@@ -18,8 +18,8 @@ import { SeedModule } from './seed/seed.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
-    MongooseModule.forRoot('mongodb://localhost:27017/nest-pokedex'),
-    // MongooseModule.forRoot(process.env.MONGODB),
+    // MongooseModule.forRoot('mongodb://localhost:27017/nest-pokedex'),
+    MongooseModule.forRoot(process.env.MONGODB),
     CommonModule,
     SeedModule,
   ],

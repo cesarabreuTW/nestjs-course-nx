@@ -28,7 +28,6 @@ async function bootstrap() {
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`
   );
-  console.log({ env: process.env, port });
 }
 
 bootstrap();

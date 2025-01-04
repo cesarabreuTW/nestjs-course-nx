@@ -6,9 +6,9 @@ services:
     container_name: pokedex
     restart: always
     ports:
-      - 3000:3000
+      - "${PORT}:${PORT}"
     environment:
-      MONGODB: mongodb://localhost:27017/nest-pokemon
+      MONGODB: ${MONGODB}
       PORT: 3000
       DEFAULT_LIMIT: 5
     build:
@@ -17,9 +17,9 @@ services:
 
   db:
     image: mongo:5
-    container_name: mongo-pokemon
+    container_name: mongo-pokedex
     restart: always
     ports:
-      - 27017:27017
+      - "${MONGO_PORT}:${MONGO_PORT}"
     environment:
-      MONGODB_DATABASE: nest-pokemon
+      MONGODB_DATABASE: ${MONGO_DB}
