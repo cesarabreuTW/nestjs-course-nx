@@ -99,3 +99,11 @@ And join the Nx community:
 - [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
 - [Our Youtube channel](https://www.youtube.com/@nxdevtools)
 - [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+
+
+# Using docker compose
+
+To run the docker-compose file, use the following command:
+- docker-compose up -d (d flag stands for detached)
+- docker-compose up --build -d (In order to build your own image. Those whose use a DockerFile)
+- docker-compose down (To take down your containers)

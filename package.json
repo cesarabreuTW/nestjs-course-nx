@@ -9,11 +9,16 @@
     "build": "npx nx build",
     "start:car-dealership": "npm start car-dealership",
     "start:pokedex": "npm start pokedex",
+    "start:teslo-shop": "npm start teslo-shop",
     "lint:car-dealership": "npm lint car-dealership",
     "lint:pokedex": "npm lint pokedex",
+    "lint:teslo-shop": "npm lint teslo-shop",
     "test:car-dealership": "npm test car-dealership",
     "test:pokedex": "npm test pokedex",
-    "build:pokedex": "npm run build pokedex"
+    "test:teslo-shop": "npm test teslo-shop",
+    "build:pokedex": "npm run build pokedex",
+    "build:car-dealership": "npm run build car-dealership",
+    "nuild:teslo-shop": "npm run build teslo-shop"
   },
   "private": true,
   "dependencies": {
@@ -25,13 +30,16 @@
     "@nestjs/mongoose": "^10.1.0",
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/serve-static": "^4.0.2",
+    "@nestjs/typeorm": "^10.0.2",
     "axios": "^1.7.9",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "mongoose": "^8.9.2",
+    "pg": "^8.13.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^6.0.1",
-    "rxjs": "^7.8.0"
+    "rxjs": "^7.8.0",
+    "typeorm": "^0.3.20"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
