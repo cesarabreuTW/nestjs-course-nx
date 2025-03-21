@@ -2,14 +2,14 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { ProductsModule } from './feature/products/products.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: '127.0.0.1', // does not work with localhost. It must be localhost address explicitly
+      host: process.env.POSTGRES_HOST, // Using environment variable for host configuration
       port: +process.env.POSTGRES_PORT,
       database: process.env.POSTGRES_DB,
       username: process.env.POSTGRES_USER,
@@ -17,8 +17,9 @@ import { AppService } from './app.service';
       autoLoadEntities: true,
       synchronize: true, // NOT USE IT IN PRODUCTION
     }),
+    ProductsModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

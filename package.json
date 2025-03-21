@@ -18,7 +18,7 @@
     "test:teslo-shop": "npm test teslo-shop",
     "build:pokedex": "npm run build pokedex",
     "build:car-dealership": "npm run build car-dealership",
-    "nuild:teslo-shop": "npm run build teslo-shop"
+    "build:teslo-shop": "npm run build teslo-shop"
   },
   "private": true,
   "dependencies": {
