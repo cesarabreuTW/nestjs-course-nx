@@ -18,7 +18,8 @@
     "test:teslo-shop": "npm test teslo-shop",
     "build:pokedex": "npm run build pokedex",
     "build:car-dealership": "npm run build car-dealership",
-    "build:teslo-shop": "npm run build teslo-shop"
+    "build:teslo-shop": "npm run build teslo-shop",
+    "docker:teslo-shop": "docker compose -f docker-compose-teslo.yaml down && docker compose -f docker-compose-teslo.yaml build && docker compose -f docker-compose-teslo.yaml up -d"
   },
   "private": true,
   "dependencies": {
