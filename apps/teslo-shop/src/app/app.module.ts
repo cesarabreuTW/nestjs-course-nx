@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { ProductsModule } from './feature/products/products.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ProductsModule } from './feature/products/products.module';
       synchronize: true, // NOT USE IT IN PRODUCTION
     }),
     ProductsModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [],
