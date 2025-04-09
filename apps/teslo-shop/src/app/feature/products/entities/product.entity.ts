@@ -52,6 +52,8 @@ export class Product {
   })
   tags: string[];
 
+  // TODO: crear relacion con product image - 1:N
+
   @BeforeInsert()
   checkSlug(): void {
     if (!this.slug) {
