@@ -1,11 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Product } from './product.entity';
 
 @Entity()
 export class ProductImage {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn('increment')
   id: string;
   @Column('text')
   url: string;
 
-  // TODO: crear relacion con producto - N:1
+  // relacion N:1
+  @ManyToOne(() => Product, (product) => product.images)
+  product: Product;
 }

@@ -3,8 +3,10 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { ProductImage } from './product-image.entity';
 
 // vendria siendo el equivalente a una tabla de la base de datos
 @Entity()
@@ -52,7 +54,12 @@ export class Product {
   })
   tags: string[];
 
-  // TODO: crear relacion con product image - 1:N
+  // relacion - 1:N
+  @OneToMany(() => ProductImage, (productImage) => productImage.product, {
+    cascade: true,
+    eager: true, // carga de forma anticipada la relacion de la tabla images. NOTA: no funciona con QueryBuilder!!
+  })
+  images?: ProductImage[];
 
   @BeforeInsert()
   checkSlug(): void {

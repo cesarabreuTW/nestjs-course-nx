@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -11,18 +10,26 @@ import { validate as isUUID } from 'uuid';
 import { PaginationDto } from '../../common/pagination-dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { Product } from './entities/product.entity';
+import { Product, ProductImage } from './entities';
 
 @Injectable()
 export class ProductsService {
   private readonly logger = new Logger('ProductsService');
   constructor(
     @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>
+    private readonly productRepository: Repository<Product>,
+    @InjectRepository(ProductImage)
+    private readonly productImagesRepository: Repository<ProductImage>
   ) {}
   async create(createProductDto: CreateProductDto) {
     try {
-      const product = this.productRepository.create(createProductDto);
+      const { images = [], ...restProduct } = createProductDto;
+      const product = this.productRepository.create({
+        ...restProduct,
+        images: images.map(
+          (imageUrl) => this.productImagesRepository.create({ url: imageUrl }) // TypeOrm infiere automaticamente las otras propiedades y hace la insercion en la tabla images
+        ),
+      });
       await this.productRepository.save(product);
       return product;
     } catch (error) {
@@ -35,7 +42,9 @@ export class ProductsService {
     const products = await this.productRepository.find({
       skip: offset,
       take: limit,
-      // TODO: relaciones
+      relations: {
+        images: true,
+      },
     });
     return products;
   }
@@ -54,9 +63,10 @@ export class ProductsService {
       const product = await this.productRepository.preload({
         id,
         ...updateProductDto,
+        images: [],
       });
       if (!product)
-        throw new BadRequestException(`Product with id ${id} not found`);
+        throw new NotFoundException(`Product with id ${id} not found`);
       await this.productRepository.save(product);
       return product;
     } catch (error) {
@@ -80,8 +90,6 @@ export class ProductsService {
   }
 
   private async getProduct(id: string): Promise<Product | null> {
-    // TODO: Se utilizara el mismo metodo para buscar por id, slug o title
-    // validar uuid con libreria uuid o por expresion regular
     let product: Product | null = null;
     if (isUUID(id)) {
       product = await this.productRepository.findOne({ where: { id: id } });
@@ -92,6 +100,7 @@ export class ProductsService {
           title: id,
           slug: id,
         })
+        .leftJoinAndSelect('product.images', 'images') // Es el equivalente a eager en la entidad Product
         .getOne();
     }
     return product;
