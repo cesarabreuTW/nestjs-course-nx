@@ -1,4 +1,10 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 // vendria siendo el equivalente a una tabla de la base de datos
 @Entity()
@@ -45,6 +51,14 @@ export class Product {
     if (!this.slug) {
       this.slug = this.title;
     }
+    this.slug = this.slug
+      .toLowerCase()
+      .replaceAll(' ', '-')
+      .replaceAll("'", '');
+  }
+
+  @BeforeUpdate()
+  checkSlugUpdate(): void {
     this.slug = this.slug
       .toLowerCase()
       .replaceAll(' ', '-')
