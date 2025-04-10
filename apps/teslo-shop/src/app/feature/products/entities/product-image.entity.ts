@@ -9,6 +9,8 @@ export class ProductImage {
   url: string;
 
   // relacion N:1
-  @ManyToOne(() => Product, (product) => product.images)
+  @ManyToOne(() => Product, (product) => product.images, {
+    onDelete: 'CASCADE', // Borrar los registros asociados al producto que se borra
+  })
   product: Product;
 }

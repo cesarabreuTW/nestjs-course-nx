@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 import { validate as isUUID } from 'uuid';
 import { PaginationDto } from '../../common/pagination-dto';
 import { CreateProductDto } from './dto/create-product.dto';
@@ -19,7 +19,8 @@ export class ProductsService {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     @InjectRepository(ProductImage)
-    private readonly productImagesRepository: Repository<ProductImage>
+    private readonly productImagesRepository: Repository<ProductImage>,
+    private readonly dataSource: DataSource // tiene la informacion de conexion a la BD
   ) {}
   async create(createProductDto: CreateProductDto) {
     try {
@@ -58,18 +59,44 @@ export class ProductsService {
   }
 
   async update(id: string, updateProductDto: UpdateProductDto) {
+    const { images, ...restProduct } = updateProductDto;
+
+    // usar en vez de find, porque ya de una vez se prepara el objeto con la actualizacion
+    const product = await this.productRepository.preload({
+      id,
+      ...restProduct,
+    });
+    if (!product)
+      throw new NotFoundException(`Product with id ${id} not found`);
+
+    // TODO: crear query runner para actualizar products y productImages (transacciones)
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
     try {
-      // usar en vez de find, porque ya de una vez se prepara el objeto con la actualizacion
-      const product = await this.productRepository.preload({
-        id,
-        ...updateProductDto,
-        images: [],
-      });
-      if (!product)
-        throw new NotFoundException(`Product with id ${id} not found`);
-      await this.productRepository.save(product);
+      // NOTA: en ambos casos, se borran todas las imagenes y se vuelven a crear, esto modifica el id de las imagenes
+      if (images) {
+        await queryRunner.manager.delete(ProductImage, { product: { id } });
+        product.images = images.map((urlImage) =>
+          this.productImagesRepository.create({ url: urlImage })
+        );
+      } else {
+        // TODO: hay que hacer algo cuando no vengan las imagenes
+        product.images = await this.productImagesRepository.findBy({
+          product: { id },
+        });
+      }
+      await queryRunner.manager.save(product);
+
+      await queryRunner.commitTransaction();
+      await queryRunner.release();
+
       return product;
     } catch (error) {
+      await queryRunner.rollbackTransaction();
+      await queryRunner.release();
+
       this.handleDBExceptions(error);
     }
   }
@@ -92,7 +119,7 @@ export class ProductsService {
   private async getProduct(id: string): Promise<Product | null> {
     let product: Product | null = null;
     if (isUUID(id)) {
-      product = await this.productRepository.findOne({ where: { id: id } });
+      product = await this.productRepository.findOne({ where: { id } }); // trae los datos de productImages porque la relacion se cargó con eager en la entidad Product
     } else {
       const queryBuilder = this.productRepository.createQueryBuilder('product');
       product = await queryBuilder
