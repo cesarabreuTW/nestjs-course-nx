@@ -1,31 +1,23 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Product } from '../feature/products/entities/product.entity';
+import { Injectable } from '@nestjs/common';
+import { ProductsService } from '../feature/products/products.service';
 import { initialData } from './seed';
 
 @Injectable()
 export class SeedService {
-  private readonly logger = new Logger('SeedService');
-  constructor(
-    @InjectRepository(Product)
-    private readonly productRepository: Repository<Product>
-  ) {}
-  async create() {
-    try {
-      const insertions = initialData.products.map((product) => {
-        const producCreated = this.productRepository.create(product);
-        return this.productRepository.save(producCreated);
-      });
-      await Promise.all(insertions);
-      return 'Seed executed!!';
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException('No se pudo!');
-    }
+  constructor(private readonly productsService: ProductsService) {}
+  async runSeed() {
+    await this.insertNewProducts();
+    return 'SEED EXECUTED';
+  }
+
+  private async insertNewProducts() {
+    const products = initialData.products;
+    const asyncInsertionList = products.map((product) =>
+      this.productsService.create(product)
+    );
+    await this.productsService.deleteAllProducts();
+    await Promise.all(asyncInsertionList);
+
+    return true;
   }
 }
