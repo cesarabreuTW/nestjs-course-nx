@@ -111,6 +111,15 @@ export class ProductsService {
     return `The product with id ${id} was successfully removed`;
   }
 
+  async deleteAllProducts() {
+    const query = this.productRepository.createQueryBuilder('product');
+    try {
+      return await query.delete().where({}).execute();
+    } catch (e) {
+      this.handleDBExceptions(e);
+    }
+  }
+
   private handleDBExceptions(error: any) {
     this.logger.error(error);
     throw new InternalServerErrorException('Ayuda!');
